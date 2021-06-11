@@ -3,14 +3,14 @@ const postsContainer = document.getElementById("posts-container");
 const loading = document.querySelector(".loader");
 const filter = document.getElementById("#filter");
 
-let limit = 3;
+let limit = 8;
 let page = 1;
 
 // Functions ======================================================
 // Fetch posts from API
 async function getPosts() {
   const res = await fetch(
-    `https://jsonplaceholder.typicode.com/posts?_limit=${limit}_page=${page}`
+    `https://jsonplaceholder.typicode.com/posts?_limit=${limit}&_page=${page}`
   );
 
   const data = await res.json();
@@ -37,5 +37,27 @@ async function showPosts() {
   });
 }
 
+// Show loader & fetch more posts
+function showLoading() {
+  loading.classList.add("show");
+
+  setTimeout(() => {
+    loading.classList.remove("show");
+
+    setTimeout(() => {
+      page++;
+      showPosts();
+    }, 300);
+  }, 1000);
+}
+
 // Show initial posts
 showPosts();
+
+window.addEventListener("scroll", () => {
+  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+  if (scrollTop + clientHeight >= scrollHeight - 5) {
+    showLoading();
+  }
+});
